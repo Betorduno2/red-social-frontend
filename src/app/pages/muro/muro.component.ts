@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PostService } from '../../services/post.service';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { ActivateService } from '../../services/activate.service';
 
 @Component({
   selector: 'app-muro',
@@ -15,8 +16,19 @@ export class MuroComponent implements OnInit {
   searchText: string = '';
   searchText$ = new BehaviorSubject<string>('');
   private unsubscribe$ = new Subject<void>();
+  private subscription: Subscription;
 
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private activateService: ActivateService
+    ) {
+      this.subscription = activateService.active$.subscribe((active)=>{
+        if (active) {
+          this.allPosts();
+        }
+      })
+    }
+  
 
   ngOnInit(): void {
     this.allPosts();
@@ -26,6 +38,7 @@ export class MuroComponent implements OnInit {
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+    this.subscription.unsubscribe();
   }
 
   allPosts() {

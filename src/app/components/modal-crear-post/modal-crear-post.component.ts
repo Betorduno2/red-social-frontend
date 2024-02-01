@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
 import { AlertService } from '../../services/alert.service';
+import { ActivateService } from '../../services/activate.service';
 
 @Component({
   selector: 'app-modal-crear-post',
@@ -21,7 +22,8 @@ export class ModalCrearPostComponent {
   constructor(
     private fb: FormBuilder,
     private postService: PostService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private activateService: ActivateService
   ) {
     this.postForm = this.fb.group({
       title: ['', Validators.required],
@@ -45,6 +47,7 @@ export class ModalCrearPostComponent {
         (response) => {
           // Manejar la respuesta después de crear el post
           this.closeModal.emit();
+          this.activateService.activate(true);
           this.alertService.success('Post creado con éxito!');
         },
         (error) => {
