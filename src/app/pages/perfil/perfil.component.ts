@@ -4,6 +4,7 @@ import { RegisterService } from '../../services/register.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/users.service';
 import { AlertService } from '../../services/alert.service';
+import { user } from '../../interfaces/user';
 
 @Component({
   selector: 'app-perfil',
@@ -13,6 +14,7 @@ import { AlertService } from '../../services/alert.service';
 export class PerfilComponent {
   perfilForm: FormGroup;
   userId: string | null;
+  user: user = {};
 
   constructor(
     private fb: FormBuilder, 
@@ -52,6 +54,7 @@ export class PerfilComponent {
     this.userService.getUserById(userId).subscribe(
       (userData) => {
         // Establecer los datos del usuario en el formulario
+        this.user = userData;
         const { password, ...userDataWithoutPassword } = userData;
         this.perfilForm.patchValue(userDataWithoutPassword);
       },

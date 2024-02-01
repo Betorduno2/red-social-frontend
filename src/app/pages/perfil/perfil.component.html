@@ -71,6 +71,12 @@
                             </linearGradient>
                         </defs>
                     </svg>
+
+                    <div class="mt-8 pb-10 text-center">
+                        <h5 class="hidden mt-4 text-xl font-semibold text-gray-600 lg:block">{{user.fullName}} ({{user.alias}})</h5>
+                        <span class="hidden text-gray-400 lg:block">{{user.email}}</span>
+                    </div>
+
                     <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()" class="mt-8 mb-2 ">
                         <div class="mb-4 flex flex-col gap-6">
                             <div class="relative h-11 w-full min-w-[200px]">
