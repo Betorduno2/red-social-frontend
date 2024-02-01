@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-modal-crear-post',
@@ -19,9 +20,8 @@ export class ModalCrearPostComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private postService: PostService
+    private postService: PostService,
+    private alertService: AlertService
   ) {
     this.postForm = this.fb.group({
       title: ['', Validators.required],
@@ -44,17 +44,25 @@ export class ModalCrearPostComponent {
       this.postService.createPost(postDetails).subscribe(
         (response) => {
           // Manejar la respuesta después de crear el post
-          this.closeModal.emit()
-          console.log('Post creado con éxito:', response);
+          this.closeModal.emit();
+          this.alertService.success('Post creado con éxito!');
         },
         (error) => {
           // Manejar errores durante la creación del post
+          this.alertService.success('Error al crear el post');
           console.error('Error al crear el post:', error);
         }
       );
     } else {
-      this.showAlert = true;
-      this.alertMessage = 'Por favor, completa todos los campos correctamente.';
+       // El formulario no es válido, construir el mensaje de alerta
+       const invalidFields: string[] = [];
+       for (const controlName in this.postForm.controls) {
+         const control = this.postForm.controls[controlName];
+         if (control.invalid) {
+           invalidFields.push(controlName);
+         }
+       }
+       this.alertService.error(`Por favor, completa todos los campos correctamente. Los siguientes campos son inválidos o requeridos: ${invalidFields.join(', ')}.`);
     }
   }
 

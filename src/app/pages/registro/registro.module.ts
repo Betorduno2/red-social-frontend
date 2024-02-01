@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RegistroComponent } from './registro.component';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../../shared/shared.module';
 
 const routes: Routes = [
   { path: '', component: RegistroComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
+    SharedModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes)
   ]

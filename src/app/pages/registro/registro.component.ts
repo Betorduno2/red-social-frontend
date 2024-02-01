@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegisterService } from '../../services/register.service';
 import { Router } from '@angular/router';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-registro',
@@ -11,14 +12,12 @@ import { Router } from '@angular/router';
 })
 export class RegistroComponent {
   registrationForm: FormGroup;
-  showAlert: boolean = false;
-  alertMessage: string = '';
-  isError: boolean = false;
 
   constructor(
     private fb: FormBuilder, 
     private registerService: RegisterService,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService
   ) {
     this.registrationForm = this.fb.group({
       fullName: ['', Validators.required],
@@ -55,18 +54,14 @@ export class RegistroComponent {
       this.registerService.register(userDetails).subscribe(
         (response) => {
           // Manejar la lógica después de un registro exitoso
-          this.isError = false;
-          this.showAlert = true;
-          this.alertMessage = 'Registro exitoso.';
+          this.alertService.success('Registro exitoso.');
           setTimeout(() => {
             this.router.navigate(['/inicio-sesion']);
           }, 3000);
         },
         (error) => {
           // Manejar errores durante el registro
-          this.isError = true;
-          this.showAlert = true;
-          this.alertMessage = 'Error durante el registro. Por favor, inténtalo de nuevo.';
+          this.alertService.error('Error durante el registro. Por favor, inténtalo de nuevo.');
         }
       );
     } else {
@@ -78,13 +73,7 @@ export class RegistroComponent {
           invalidFields.push(controlName);
         }
       }
-      this.isError = true;
-      this.showAlert = true;
-      this.alertMessage = `Por favor, completa todos los campos correctamente. Los siguientes campos son inválidos o requeridos: ${invalidFields.join(', ')}.`;
+      this.alertService.error(`Por favor, completa todos los campos correctamente. Los siguientes campos son inválidos o requeridos: ${invalidFields.join(', ')}.`);
     }
-  }
-
-  hideAlert() {
-    this.showAlert = false;
   }
 }

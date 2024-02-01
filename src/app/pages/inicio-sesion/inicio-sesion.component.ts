@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-inicio-sesion',
@@ -11,13 +12,12 @@ import { Router } from '@angular/router';
 
 export class InicioSesionComponent {
   loginForm: FormGroup;
-  showAlert: boolean = false;
-  alertMessage: string = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -27,30 +27,21 @@ export class InicioSesionComponent {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      this.showAlert = false;
       const { email, password } = this.loginForm.value;
 
       this.authService.login(email, password).subscribe(
         (response) => {
           // Maneja la lógica después de un inicio de sesión exitoso
           this.router.navigate(['/muro']);
-          console.log('Inicio de sesión exitoso:', response);
         },
         (error) => {
           // Muestra una alerta en caso de error
-          this.showAlert = true;
-          this.alertMessage = 'Credenciales inválidas. Por favor, inténtalo de nuevo.';
-          console.error('Error al iniciar sesión:', error);
+          this.alertService.error('Credenciales inválidas. Por favor, inténtalo de nuevo.');
         }
       );
     } else {
-      this.showAlert = true;
-      this.alertMessage = 'Por favor, completa todos los campos correctamente.';
+      this.alertService.error('Por favor, completa todos los campos correctamente.');
     }
-  }
-
-  hideAlert() {
-    this.showAlert = false;
   }
   
 }
